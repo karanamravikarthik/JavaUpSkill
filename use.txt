@@ -1,11 +1,9 @@
 package com.example.config;
 
-import com.example.interceptor.JwtHeaderInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 
 @Configuration
 public class SoapClientConfig {
@@ -13,7 +11,7 @@ public class SoapClientConfig {
     @Bean
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("com.example.generated");
+        marshaller.setContextPath("com.dfs.mktsvcs.crsejb.ao"); // Package containing generated classes
         return marshaller;
     }
 
@@ -22,12 +20,6 @@ public class SoapClientConfig {
         WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
         webServiceTemplate.setMarshaller(marshaller);
         webServiceTemplate.setUnmarshaller(marshaller);
-
-        // Add JWT Header Interceptor
-        webServiceTemplate.setInterceptors(new ClientInterceptor[]{
-            new JwtHeaderInterceptor("your-jwt-token-here")
-        });
-
         return webServiceTemplate;
     }
 }
