@@ -1,20 +1,26 @@
-@Bean
-public WebServiceTemplate webServiceTemplate(Jaxb2Marshaller marshaller) {
-    WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
-    webServiceTemplate.setMarshaller(marshaller);
-    webServiceTemplate.setUnmarshaller(marshaller);
+package com.example.service;
 
-    JwtHeaderInterceptor jwtHeaderInterceptor = new JwtHeaderInterceptor();
-    jwtHeaderInterceptor.setJwtToken(fetchJwtToken()); // Replace with your token-fetching logic
+import com.dfs.mktsvcs.crsejb.ao.ObjectFactory;
+import com.dfs.mktsvcs.crsejb.ao.VariableListInputVO;
+import com.dfs.mktsvcs.crsejb.ao.VariableListOutputVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
-    webServiceTemplate.setInterceptors(new ClientInterceptor[] {
-        jwtHeaderInterceptor
-    });
+import javax.xml.bind.JAXBElement;
 
-    return webServiceTemplate;
-}
+@Service
+public class SoapClientService {
 
-private String fetchJwtToken() {
-    // Logic to fetch JWT token (e.g., from a REST API or configuration)
-    return "your-fetched-jwt-token";
+    @Autowired
+    private WebServiceTemplate webServiceTemplate;
+
+    private static final String SOAP_ENDPOINT_URL = "http://example.com/wsdl-endpoint";
+
+    public VariableListOutputVO getVariableList(VariableListInputVO inputVO) {
+        ObjectFactory objectFactory = new ObjectFactory();
+        JAXBElement<VariableListInputVO> jaxbElement = objectFactory.createVariableListInputVO(inputVO);
+
+        return (VariableListOutputVO) webServiceTemplate.marshalSendAndReceive(SOAP_ENDPOINT_URL, jaxbElement);
+    }
 }
