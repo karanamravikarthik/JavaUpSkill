@@ -1,26 +1,183 @@
-package com.example.service;
+package com.example.config;
 
-import com.dfs.mktsvcs.crsejb.ao.ObjectFactory;
-import com.dfs.mktsvcs.crsejb.ao.VariableListInputVO;
-import com.dfs.mktsvcs.crsejb.ao.VariableListOutputVO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-import javax.xml.bind.JAXBElement;
+import java.util.Map;
 
-@Service
-public class SoapClientService {
+@Configuration
+@ConfigurationProperties(prefix = "services")
+public class ServiceConfig {
 
-    @Autowired
-    private WebServiceTemplate webServiceTemplate;
+    private Map<String, ServiceDetails> serviceDetails;
 
-    private static final String SOAP_ENDPOINT_URL = "http://example.com/wsdl-endpoint";
+    // Getters and Setters
+    public Map<String, ServiceDetails> getServiceDetails() {
+        return serviceDetails;
+    }
 
-    public VariableListOutputVO getVariableList(VariableListInputVO inputVO) {
-        ObjectFactory objectFactory = new ObjectFactory();
-        JAXBElement<VariableListInputVO> jaxbElement = objectFactory.createVariableListInputVO(inputVO);
+    public void setServiceDetails(Map<String, ServiceDetails> serviceDetails) {
+        this.serviceDetails = serviceDetails;
+    }
 
-        return (VariableListOutputVO) webServiceTemplate.marshalSendAndReceive(SOAP_ENDPOINT_URL, jaxbElement);
+    public static class ServiceDetails {
+        private String uri;
+        private int connTimeout;
+        private int receiveTimeout;
+        private String contextPath;
+        private SSLConfig ssl;
+
+        // Getters and Setters
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public int getConnTimeout() {
+            return connTimeout;
+        }
+
+        public void setConnTimeout(int connTimeout) {
+            this.connTimeout = connTimeout;
+        }
+
+        public int getReceiveTimeout() {
+            return receiveTimeout;
+        }
+
+        public void setReceiveTimeout(int receiveTimeout) {
+            this.receiveTimeout = receiveTimeout;
+        }
+
+        public String getContextPath() {
+            return contextPath;
+        }
+
+        public void setContextPath(String contextPath) {
+            this.contextPath = contextPath;
+        }
+
+        public SSLConfig getSsl() {
+            return ssl;
+        }
+
+        public void setSsl(SSLConfig ssl) {
+            this.ssl = ssl;
+        }
+    }
+
+    public static class SSLConfig {
+        private boolean enabled;
+        private String keyStoreKey;
+        private String keyStorePwd;
+        private String keyStoreType;
+        private String trustStore;
+        private String trustStorePwd;
+        private String proxyAddress;
+        private boolean hostNameVerification;
+        private boolean disableHostValidation;
+        private int connectionRequestTimeout;
+        private int outBoundConnectionPoolPerHost;
+        private int connectionTimeToLive;
+
+        // Getters and Setters
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getKeyStoreKey() {
+            return keyStoreKey;
+        }
+
+        public void setKeyStoreKey(String keyStoreKey) {
+            this.keyStoreKey = keyStoreKey;
+        }
+
+        public String getKeyStorePwd() {
+            return keyStorePwd;
+        }
+
+        public void setKeyStorePwd(String keyStorePwd) {
+            this.keyStorePwd = keyStorePwd;
+        }
+
+        public String getKeyStoreType() {
+            return keyStoreType;
+        }
+
+        public void setKeyStoreType(String keyStoreType) {
+            this.keyStoreType = keyStoreType;
+        }
+
+        public String getTrustStore() {
+            return trustStore;
+        }
+
+        public void setTrustStore(String trustStore) {
+            this.trustStore = trustStore;
+        }
+
+        public String getTrustStorePwd() {
+            return trustStorePwd;
+        }
+
+        public void setTrustStorePwd(String trustStorePwd) {
+            this.trustStorePwd = trustStorePwd;
+        }
+
+        public String getProxyAddress() {
+            return proxyAddress;
+        }
+
+        public void setProxyAddress(String proxyAddress) {
+            this.proxyAddress = proxyAddress;
+        }
+
+        public boolean isHostNameVerification() {
+            return hostNameVerification;
+        }
+
+        public void setHostNameVerification(boolean hostNameVerification) {
+            this.hostNameVerification = hostNameVerification;
+        }
+
+        public boolean isDisableHostValidation() {
+            return disableHostValidation;
+        }
+
+        public void setDisableHostValidation(boolean disableHostValidation) {
+            this.disableHostValidation = disableHostValidation;
+        }
+
+        public int getConnectionRequestTimeout() {
+            return connectionRequestTimeout;
+        }
+
+        public void setConnectionRequestTimeout(int connectionRequestTimeout) {
+            this.connectionRequestTimeout = connectionRequestTimeout;
+        }
+
+        public int getOutBoundConnectionPoolPerHost() {
+            return outBoundConnectionPoolPerHost;
+        }
+
+        public void setOutBoundConnectionPoolPerHost(int outBoundConnectionPoolPerHost) {
+            this.outBoundConnectionPoolPerHost = outBoundConnectionPoolPerHost;
+        }
+
+        public int getConnectionTimeToLive() {
+            return connectionTimeToLive;
+        }
+
+        public void setConnectionTimeToLive(int connectionTimeToLive) {
+            this.connectionTimeToLive = connectionTimeToLive;
+        }
     }
 }
