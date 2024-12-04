@@ -1,25 +1,42 @@
-package com.example.config;
+package com.example.interceptor;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.client.support.interceptor.ClientInterceptor;
+import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.soap.saaj.SaajSoapMessage;
 
-@Configuration
-public class SoapClientConfig {
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPMessage;
 
-    @Bean
-    public Jaxb2Marshaller marshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("com.dfs.mktsvcs.crsejb.ao"); // Package containing generated classes
-        return marshaller;
+public class JwtHeaderInterceptor implements ClientInterceptor {
+
+    private String jwtToken;
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
     }
 
-    @Bean
-    public WebServiceTemplate webServiceTemplate(Jaxb2Marshaller marshaller) {
-        WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
-        webServiceTemplate.setMarshaller(marshaller);
-        webServiceTemplate.setUnmarshaller(marshaller);
-        return webServiceTemplate;
+    @Override
+    public boolean handleRequest(MessageContext messageContext) {
+        try {
+            SaajSoapMessage saajSoapMessage = (SaajSoapMessage) messageContext.getRequest();
+            SOAPMessage soapMessage = saajSoapMessage.getSaajMessage();
+
+            // Add Authorization header
+            MimeHeaders headers = soapMessage.getMimeHeaders();
+            headers.addHeader("Authorization", "Bearer " + jwtToken);
+        } catch (Exception e) {
+            throw new RuntimeException("Error adding JWT token to SOAP request", e);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean handleResponse(MessageContext messageContext) {
+        return true;
+    }
+
+    @Override
+    public boolean handleFault(MessageContext messageContext) {
+        return true;
     }
 }
