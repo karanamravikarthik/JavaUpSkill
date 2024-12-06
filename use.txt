@@ -1,6 +1,17 @@
+@SpringBootApplication
 @ComponentScan(
-    excludeFilters = @ComponentScan.Filter(
+    basePackages = "com.example.dependency.package",
+    includeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
-        classes = {com.discover.corebanking.common.client.util.ClientUtil.class}
-    )
+        value = {
+            com.example.dependency.package.ClassA.class,
+            com.example.dependency.package.ClassB.class
+        }
+    ),
+    useDefaultFilters = false // Disable default scanning
 )
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
