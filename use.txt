@@ -1,1 +1,15 @@
-https://www.sejda.com/share/b502945d6b7a40dabfb1ac3ac098d466-0fpgISzosf-bXM02_IlE5JAxi-KYm1RpH8wpCO9yGHeOQCgE6bbkclxrhtsvd6Uf
+@PostMapping("/root-level")
+public String updateRootLogLevel(@RequestBody LogLevelRequest logLevelRequest) {
+    LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+    Logger rootLogger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
+
+    Level level;
+    try {
+        level = Level.valueOf(logLevelRequest.getLevel().toUpperCase());
+    } catch (IllegalArgumentException e) {
+        return "Invalid log level: " + logLevelRequest.getLevel() + ". Valid levels are: TRACE, DEBUG, INFO, WARN, ERROR.";
+    }
+
+    rootLogger.setLevel(level);
+    return String.format("Root logger level changed to [%s]", level.toString());
+}
